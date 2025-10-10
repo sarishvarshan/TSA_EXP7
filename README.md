@@ -2,7 +2,7 @@
 ### Date: 10-10-2025
 
 #### NAME: Sarish Varshan V
-#### REGISTER NUMBER:212223230196
+#### REGISTER NUMBER: 212223230196
 
 ### AIM:
 To Implementat an Auto Regressive Model using Python
