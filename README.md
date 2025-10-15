@@ -1,9 +1,7 @@
 # Ex.No: 07                                       AUTO REGRESSIVE MODEL
-### Date: 10-10-2025
-
-#### NAME: Sarish Varshan V
-#### REGISTER NUMBER: 212223230196
-
+### Date: 13.10.2025
+### Name: Sarish Varshan V
+### Reg No: 212223230196
 ### AIM:
 To Implementat an Auto Regressive Model using Python
 ### ALGORITHM:
@@ -14,70 +12,68 @@ To Implementat an Auto Regressive Model using Python
 5. Plot Partial Autocorrelation Function (PACF) and Autocorrelation Function (ACF)
 6. Make predictions using the AR model.Compare the predictions with the test data
 7. Calculate Mean Squared Error (MSE).Plot the test data and predictions.
-
-### PROGRAM
-```python
-import numpy as np
+### PROGRAM:
+```
 import pandas as pd
-import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import numpy as np
 from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-data = pd.read_csv("gold.csv")
+# Step 1: Load dataset
+file_path = 'cardekho.csv'
+df = pd.read_csv(file_path)
 
-data['Date'] = pd.to_datetime(data['Date'], format='%m/%d/%Y')
-data = data.sort_values('Date')
+print("Dataset Columns:", df.columns)
+print(df.head())
 
-data['Price'] = data['Price'].replace(',', '', regex=True).astype(float)
-data = data.set_index('Date')
+df['sale_date'] = pd.to_datetime(df['year'], format='%Y')
 
-ts = data['Price']
+df.set_index('sale_date', inplace=True)
 
-result = adfuller(ts.dropna())
-print('ADF Statistic:', result[0])
-print('p-value:', result[1])
-print('Critical Values:', result[4])
+default_column_name = 'selling_price' if 'selling_price' in df.columns else df.columns[0]
+series = df[default_column_name]
+print(f"Using column '{default_column_name}' for time series.")
 
-plot_acf(ts.dropna(), lags=30)
-plot_pacf(ts.dropna(), lags=30)
+adf_result = adfuller(series.dropna())
+print(f"ADF Statistic: {adf_result[0]}")
+print(f"p-value: {adf_result[1]}")
+
+train_size = int(len(series) * 0.8)
+train, test = series[:train_size], series[train_size:]
+
+plt.figure(figsize=(12, 6))
+plt.subplot(121)
+plot_acf(series.dropna(), lags=30, ax=plt.gca())
+plt.subplot(122)
+plot_pacf(series.dropna(), lags=30, ax=plt.gca())
 plt.show()
 
-train_size = int(len(ts) * 0.8)
-train, test = ts[0:train_size], ts[train_size:]
+model = AutoReg(train, lags=5)  
+model_fitted = model.fit()
 
-lags = min(5, len(train) - 1)   # Ensure lags < training size
-model = AutoReg(train, lags=lags).fit()
-print(model.summary())
+predictions = model_fitted.predict(start=len(train), end=len(train) + len(test) - 1, dynamic=False)
 
-preds = model.predict(start=len(train), end=len(train)+len(test)-1, dynamic=False)
-preds.index = test.index  # Align dates properly
-
-error = mean_squared_error(test, preds)
-print("MSE:", round(error, 2))
-
-plt.figure(figsize=(10,5))
-plt.plot(test.index, test, label='Actual', color='blue')
-plt.plot(test.index, preds, label='Predicted', color='red')
-plt.title("Gold Price Forecasting (AutoReg Model)")
-plt.xlabel("Date")
-plt.ylabel("Gold Price (USD)")
+plt.figure(figsize=(10, 6))
+plt.plot(test.index, test, label='Actual')
+plt.plot(test.index, predictions, color='red', label='Predicted')
 plt.legend()
+plt.title('AR Model - Actual vs Predicted')
 plt.show()
 
+mse = mean_squared_error(test, predictions)
+print(f"Mean Squared Error: {mse}")
 ```
 ### OUTPUT:
+<img width="1032" height="586" alt="image" src="https://github.com/user-attachments/assets/b1f3ed22-f47b-4682-9895-d6822806145f" />
 
-### PACF - ACF
-<img width="709" height="542" alt="image" src="https://github.com/user-attachments/assets/51fbf5a2-41e6-4672-bd17-90586a10688a" />
+<img width="1263" height="651" alt="image" src="https://github.com/user-attachments/assets/ef1b29c7-e54a-4a04-965a-7d61ae46aef8" />
 
-<img width="705" height="541" alt="image" src="https://github.com/user-attachments/assets/c0294861-8012-43e6-8093-e9cdaf534eff" />
+<img width="1170" height="668" alt="image" src="https://github.com/user-attachments/assets/aa06a170-4675-4556-9708-f1b50f1a3924" />
 
-### FINIAL PREDICTION
-<img width="1075" height="584" alt="image" src="https://github.com/user-attachments/assets/34deb045-6851-46d9-b5e2-ceb3b0ef86c0" />
-
-
+<img width="542" height="52" alt="image" src="https://github.com/user-attachments/assets/73a7d098-7351-4c54-8172-e2c6f19fc60e" />
 
 ### RESULT:
 Thus we have successfully implemented the auto regression function using python.
