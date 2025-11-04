@@ -1,5 +1,5 @@
 # Ex.No: 07                                       AUTO REGRESSIVE MODEL
-### Date: 13.10.2025
+### Date: 04.11.2025
 ### Name: Sarish Varshan V
 ### Reg No: 212223230196
 ### AIM:
